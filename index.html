@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caldeirão dos Pênaltis</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #0b131a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+            height: 100vh;
+            max-height: 680px;
+            padding: 10px;
+            background: #151a21;
+            border-radius: 16px;
+            border: 1px solid #263544;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* MENUS E TELAS */
+        #menu-screen, #settings-screen, #career-menu-screen, #career-intro-screen, #career-country-screen, #career-team-screen, #team-select-screen, #tournament-select-screen, #continental-select-screen, #league-select-screen, #country-select-screen, #table-screen, #bracket-screen, #stats-screen, #achievements-screen, #career-hub-screen, #career-stats-screen, #phone-screen, #simulation-popup-screen, #game-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #165b33 0%, #0b131a 85%);
+            border-radius: 12px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        #menu-screen {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .menu-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #ffe600;
+            text-shadow: 
+                -2px -2px 0 #000,  
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000,
+                 0 4px 8px rgba(0,0,0,0.9);
+            line-height: 1.1;
+            text-align: center;
+            letter-spacing: 0.5px;
+            font-family: 'Comic Sans MS', 'Arial Black', sans-serif;
+            margin-top: 4px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .menu-subtitle {
+            font-size: 0.76rem;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            text-align: center;
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 92%;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+            transition: transform 0.1s ease, filter 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 6px;
+        }
+
+        .menu-btn:hover { filter: brightness(1.1); }
+        .practice-btn { background: linear-gradient(135deg, #2980b9, #1f618d); }
+        .goalkeeper-btn { background: linear-gradient(135deg, #e67e22, #ca6f1e); }
+        .tournament-btn { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+        .continental-btn { background: linear-gradient(135deg, #d35400, #ba4a00); }
+        .league-btn { background: linear-gradient(135deg, #c0392b, #962d22); }
+        .career-btn { background: linear-gradient(135deg, #f39c12, #d68910); color: #111; }
+        .country-btn { background: linear-gradient(135deg, #2980b9, #1a5276); }
+        .stats-btn { background: linear-gradient(135deg, #16a085, #117a65); }
+        .achievement-btn { background: linear-gradient(135deg, #d35400, #a04000); }
+        .settings-btn { background: linear-gradient(135deg, #7f8c8d, #616a6b); }
+        .menu-btn:active { transform: scale(0.95); }
+
+        /* ESTILO DO CELULAR */
+        .phone-body {
+            width: 100%;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .phone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #f1c40f;
+            font-weight: bold;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .phone-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 4px;
+        }
+
+        .phone-app-icon {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .phone-app-icon:hover { background: #334155; }
+        .phone-app-icon span { font-size: 0.68rem; color: #fff; font-weight: bold; text-align: center; }
+
+        .phone-app-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            text-align: left;
+            overflow-y: auto;
+            gap: 6px;
+        }
+
+        .whatsapp-contact-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+        .whatsapp-contact-item:hover { background: #334155; }
+
+        .chat-msg {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 6px 9px;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            border-left: 3px solid #25d366;
+            margin-bottom: 4px;
+        }
+
+        .chat-msg.sent {
+            background: #064e3b;
+            border-left: 3px solid #34d399;
+            text-align: right;
+            align-self: flex-end;
+        }
+
+        .insta-post {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #e1306c;
+            margin-bottom: 4px;
+        }
+
+        .gallery-card, .shop-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .spotify-track {
+            background: #1e293b;
+            border: 1px solid #1db954;
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .spotify-track:hover { background: #27374d; }
+
+        /* PAINEL DE ESTATÍSTICAS / CARREIRA / CONQUISTAS */
+        .stats-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 0.85rem;
+            color: #f1c40f;
+            font-weight: bold;
+        }
+
+        /* ITENS DE CONQUISTAS */
+        .achievement-card {
+            background: #11161d;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+        }
+
+        .achievement-card.unlocked {
+            border-color: #f1c40f;
+            background: rgba(241, 196, 15, 0.1);
+        }
+
+        .achievement-icon { font-size: 1.4rem; }
+        .achievement-info { display: flex; flex-direction: column; text-align: left; flex: 1; }
+        .achievement-name { font-size: 0.78rem; font-weight: bold; color: #fff; }
+        .achievement-desc { font-size: 0.68rem; color: #94a3b8; }
+        .achievement-status { font-size: 0.75rem; font-weight: bold; }
+
+        /* TABELA DA LIGA ORGANIZADA */
+        .table-wrapper {
+            width: 100%;
+            background: #11161d;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .league-table th {
+            background: #1e293b;
+            color: #f1c40f;
+            padding: 6px 4px;
+            font-weight: bold;
+            border-bottom: 1px solid #334155;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .league-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+        }
+
+        .league-table td.team-col { text-align: left; padding-left: 8px; font-weight: 500; }
+        .league-table tr.my-team { background: rgba(46, 204, 113, 0.25); color: #fff; font-weight: bold; border-left: 3px solid #2ecc71; }
+
+        /* ESTILO DO CHAVEAMENTO */
+        .bracket-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .bracket-round {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #3d4a5c;
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+
+        .bracket-round-title { font-size: 0.75rem; color: #f1c40f; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        .bracket-match { font-size: 0.78rem; color: #ccc; display: flex; justify-content: space-between; padding: 3px 0; }
+        .bracket-match.active { color: #2ecc71; font-weight: bold; }
+
+        /* SELEÇÃO DE TIMES E COPAS */
+        .select-group {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 6px;
+            background: rgba(20, 30, 45, 0.7);
+            border: 1px solid #2e3b4e;
+            border-radius: 8px;
+            padding: 8px 10px;
+            flex-shrink: 0;
+        }
+
+        .select-label {
+            font-size: 0.75rem;
+            color: #f1c40f;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            background: #0f172a;
+            color: white;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            outline: none;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .game-title {
+            font-size: 0.82rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+            color: #f1c40f;
+            flex-shrink: 0;
+        }
+
+        /* AVISO FLUTUANTE DE TURNO */
+        .turn-alert-banner {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 5px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* PLACAR REAL COM 5 BOLINHAS FIXAS */
+        .penalty-scoreboard {
+            background: #1a222d;
+            border: 1px solid #3d4a5c;
+            border-radius: 8px;
+            padding: 5px 8px;
+            margin-bottom: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+
+        .score-row { display: flex; align-items: center; justify-content: space-between; }
+        .team-name-display { font-size: 0.75rem; font-weight: bold; width: 100px; text-align: left; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .penalty-dots { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #2c3e50; border: 1px solid #4a5c6d; display: inline-block; }
+        .dot.goal { background: #2ecc71; box-shadow: 0 0 4px #2ecc71; border-color: #27ae60; }
+        .dot.miss { background: #e74c3c; position: relative; box-shadow: 0 0 4px #e74c3c; border-color: #c0392b; }
+        .score-number { font-size: 0.8rem; font-weight: bold; width: 16px; text-align: right; color: #fff; }
+
+        .timer-bar { width: 100%; height: 4px; background: #333; border-radius: 3px; margin-bottom: 4px; overflow: hidden; display: none; flex-shrink: 0; }
+        .timer-fill { height: 100%; width: 100%; background: #e74c3c; }
+
+        /* ESTÁDIO */
+        .stadium {
+            position: relative;
+            width: 100%;
+            height: 205px;
+            background: linear-gradient(180deg, #27ae60 0%, #1e8449 70%, #145a32 100%);
+            border: 2px solid #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            perspective: 500px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .goal-3d {
+            position: absolute;
+            top: 10px;
+            left: 18%;
+            width: 64%;
+            height: 85px;
+            border-top: 4px solid #fff;
+            border-left: 4px solid #fff;
+            border-right: 4px solid #fff;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px);
+            background-size: 12px 12px;
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: rotateX(20deg);
+            transform-origin: bottom;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.3);
+        }
+
+        .gk { position: absolute; top: 22px; left: 43%; font-size: 1.8rem; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5; }
+        .ball { 
+            position: absolute; 
+            bottom: 18px; 
+            left: 44%; 
+            font-size: 1.5rem; 
+            z-index: 10; 
+            transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+
+        @keyframes girarBola {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(0.85); }
+        }
+
+        .ball.shooting {
+            animation: girarBola 0.45s linear infinite;
+        }
+
+        .celebration-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            display: none;
+            padding: 10px;
+        }
+
+        .choice-panel { display: flex; gap: 8px; margin-bottom: 4px; flex-shrink: 0; width: 100%; }
+        .choice-btn { flex: 1; padding: 10px 6px; font-size: 0.8rem; font-weight: bold; border: none; border-radius: 8px; background: linear-gradient(135deg, #2980b9, #1f618d); color: white; cursor: pointer; box-shadow: 0 4px 10px rgba(41, 128, 185, 0.4); }
+        #message { font-size: 0.8rem; margin-bottom: 4px; font-weight: bold; min-height: 18px; flex-shrink: 0; color: #ffe600; }
+        .controls-btns { display: none; gap: 8px; margin-bottom: 4px; flex-shrink: 0; width: 100%; }
+        .btn-action { flex: 1; padding: 9px; font-size: 0.8rem; font-weight: bold; border: none; border-radius: 8px; color: white; cursor: pointer; }
+        .btn-again { background-color: #27ae60; }
+        .btn-menu { background-color: #e74c3c; }
+    </style>
+</head>
+<body onclick="ativarMusicaMenuGlobal()">
+
+    <div class="game-container">
+        <!-- MENU PRINCIPAL -->
+        <div id="menu-screen">
+            <div class="menu-title">CALDEIRÃO DOS PÊNALTIS</div>
+            <div class="menu-subtitle">Placar oficial de 5 penalidades com morte súbita!</div>
+            <button class="menu-btn career-btn" onclick="tocarSomClique(); clicarModoCarreira()">🌟 MODO CARREIRA</button>
+            <button class="menu-btn country-btn" onclick="tocarSomClique(); abrirMenuPaises()">🌐 MODO PAÍSES (SELEÇÕES)</button>
+            <button class="menu-btn" onclick="tocarSomClique(); abrirSelecaoTimes('match')">JOGAR PARTIDA</button>
+            <button class="menu-btn tournament-btn" onclick="tocarSomClique(); abrirMenuTorneio()">🏆 MODO COPA NACIONAL</button>
+            <button class="menu-btn continental-btn" onclick="tocarSomClique(); abrirMenuContinental()">🌎 MODO LIBERTADORES / UCL</button>
+            <button class="menu-btn league-btn" onclick="tocarSomClique(); abrirMenuLiga()">📊 MODO LIGA (20 RODADAS)</button>
+            <button class="menu-btn practice-btn" onclick="tocarSomClique(); abrirSelecaoTimes('practice')">🎯 MODO PRÁTICA</button>
+            <button class="menu-btn goalkeeper-btn" onclick="tocarSomClique(); abrirSelecaoTimes('goalkeeper')">🧤 MODO GOLEIRO</button>
+            <button class="menu-btn achievement-btn" onclick="tocarSomClique(); abrirConquistas()">🏆 CONQUISTAS</button>
+            <button class="menu-btn stats-btn" onclick="tocarSomClique(); abrirEstatisticasFromMenu()">📈 ESTATÍSTICAS</button>
+            <button class="menu-btn settings-btn" onclick="tocarSomClique(); abrirConfiguracoes()">⚙️ CONFIGURAÇÕES</button>
+        </div>
+
+        <!-- TELA DE MENU DO MODO CARREIRA -->
+        <div id="career-menu-screen">
+            <div class="menu-title">MODO CARREIRA</div>
+            <div class="menu-subtitle" id="careerMenuInfo" style="color: #f1c40f; font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; line-height: 1.3; margin-bottom: 8px;">
+                Carregando...
+            </div>
+            <button class="menu-btn confirm-btn" style="width: 90%;" onclick="tocarSomClique(); continuarCarreiraSalva()">▶️ CONTINUAR CARREIRA</button>
+            <button class="menu-btn" style="width: 90%; background: #e67e22;" onclick="tocarSomClique(); iniciarNovaCarreiraConfirmada()">✨ INICIAR NOVA CARREIRA</button>
+            <button class="menu-btn" style="width: 90%; background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR AO MENU</button>
+        </div>
+
+        <!-- TELA DE CONFIGURAÇÕES -->
+        <div id="settings-screen">
+            <div class="menu-title">CONFIGURAÇÕES</div>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-label">Efeitos Sonoros & Música</span>
+                    <button class="menu-btn" id="soundToggleBtn" style="width: auto; padding: 6px 10px; font-size: 0.75rem;" onclick="tocarSomClique(); alternarSom()">LIGADO 🔊</button>
+                </div>
+            </div>
+            <div class="menu-subtitle" style="color: #94a3b8; font-size: 0.72rem;">Clica na tela para iniciar a música ambiente!</div>
+            <button class="menu-btn" style="background: #e74c3c; margin-top: auto;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR AO MENU</button>
+        </div>
+
+        <!-- TELA DE SIMULAÇÃO -->
+        <div id="simulation-popup-screen">
+            <div class="menu-title">⚡ TÉCNICO POUPOU O ATLETA</div>
+            <div style="font-size: 2.2rem; margin: 8px 0;">🏃‍♂️💨</div>
+            <div class="menu-subtitle" id="simulationPopupText" style="color: #f1c40f; font-size: 0.78rem; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; line-height: 1.3; margin-bottom: 10px; border-left: 3px solid #f39c12;">
+                Simulando...
+            </div>
+            <button class="menu-btn confirm-btn" style="width: 90%;" onclick="tocarSomClique(); fecharTelaSimulacao()">CONTINUAR JORNADA ⚽</button>
+        </div>
+
+        <!-- MODO PAÍSES -->
+        <div id="country-select-screen">
+            <div class="menu-title">MODO PAÍSES</div>
+            <div class="select-group">
+                <div class="select-label">TORNEIO INTERNACIONAL:</div>
+                <select id="countryTournamentSelect" onchange="atualizarSelecoesPais()">
+                    <option value="CopaDoMundo">Copa do Mundo (Global)</option>
+                    <option value="Eurocopa">Eurocopa (Europa)</option>
+                    <option value="CopaAmerica">Copa América (América)</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">A SUA SELEÇÃO:</div>
+                <select id="playerCountrySelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); iniciarModoPaises()">INICIAR MATA-MATA 🌍</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- MODO CARREIRA: INTRO -->
+        <div id="career-intro-screen">
+            <div class="menu-title">NOVA CARREIRA</div>
+            <div class="select-group">
+                <div class="select-label">NOME DO JOGADOR:</div>
+                <input type="text" id="careerPlayerNameInput" value="Luis Felipe" placeholder="Digite seu nome">
+            </div>
+            <div class="menu-subtitle" style="text-align: left; font-size: 0.78rem; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; line-height: 1.3;">
+                Você é um prodígio de 16 anos iniciando sua jornada lendária no futebol.
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); irParaEscolhaPaisCarreira()">ESCOLHER PAÍS ⚽</button>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- MODO CARREIRA: PAÍS -->
+        <div id="career-country-screen">
+            <div class="menu-title">ESCOLHA O PAÍS</div>
+            <div class="select-group">
+                <div class="select-label">LIGA / PAÍS:</div>
+                <select id="careerCountrySelect">
+                    <option value="Brasil">Brasil (Libertadores)</option>
+                    <option value="Argentina">Argentina (Libertadores)</option>
+                    <option value="Colombia">Colômbia (Libertadores)</option>
+                    <option value="Mexico">México (Libertadores)</option>
+                    <option value="Chile">Chile (Libertadores)</option>
+                    <option value="Inglaterra">Inglaterra (Champions)</option>
+                    <option value="Espanha">Espanha (Champions)</option>
+                    <option value="Italia">Itália (Champions)</option>
+                </select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); irParaEscolhaTimeCarreira()">AVANÇAR PARA CLUBES ➡️</button>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- MODO CARREIRA: TIME -->
+        <div id="career-team-screen">
+            <div class="menu-title">ESCOLHA O CLUBE</div>
+            <div class="select-group">
+                <div class="select-label">TIME INICIAL:</div>
+                <select id="careerTeamSelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); comecarCarreiraOficial()">INICIAR CARREIRA 🌟</button>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- MODO CARREIRA: HUB -->
+        <div id="career-hub-screen">
+            <div class="menu-title" id="careerHubTitle">HUB DA CARREIRA</div>
+            <div class="menu-subtitle" id="careerHubSubtitle" style="color: #f1c40f;">Atleta: Luis Felipe</div>
+            <div class="stats-container" id="careerHubContent"></div>
+            <button class="menu-btn confirm-btn" id="careerActionBtn" onclick="tocarSomClique(); executarProximaFaseCarreira()">JOGAR PRÓXIMA ETAPA ⚽</button>
+            <div id="careerExtraButtons" style="display:none; width:100%; gap:6px; flex-direction:column;">
+                <button class="menu-btn phone-btn" style="width:100%; padding:8px;" onclick="tocarSomClique(); abrirCelular()">📱 CELULAR DO CRAQUE</button>
+                <button class="menu-btn league-btn" style="width:100%; padding:8px;" onclick="tocarSomClique(); verTabelaCarreira()">📊 VER TABELA DA LIGA</button>
+                <button class="menu-btn stats-btn" style="width:100%; padding:8px;" onclick="tocarSomClique(); abrirEstatisticasFromCareer()">📈 PERFIL DO JOGADOR</button>
+                <button class="menu-btn career-btn" style="width:100%; padding:8px; background:#3498db; color:#fff;" onclick="tocarSomClique(); salvarCarreiraManual()">💾 SALVAR CARREIRA</button>
+            </div>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">SAIR AO MENU</button>
+        </div>
+
+        <!-- CELULAR -->
+        <div id="phone-screen">
+            <div class="phone-header">
+                <span id="phoneClock">📱 LÚSEBRA PHONE 16:00</span>
+                <span style="cursor: pointer;" onclick="tocarSomClique(); fecharCelular()">❌ Fechar</span>
+            </div>
+            <div id="phoneHomeView" class="phone-body">
+                <div class="phone-apps-grid">
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('whatsapp')">
+                        <span style="font-size: 1.4rem;">💬</span><span>WhatsApp</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('instagram')">
+                        <span style="font-size: 1.4rem;">📸</span><span>Instagram</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('spotify')">
+                        <span style="font-size: 1.4rem;">🎵</span><span>Spotify</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('gallery')">
+                        <span style="font-size: 1.4rem;">🖼️</span><span>Galeria</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('shop')">
+                        <span style="font-size: 1.4rem;">🛍️</span><span>Loja Luxo</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('interviews')">
+                        <span style="font-size: 1.4rem;">🎤</span><span>Imprensa</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('news')">
+                        <span style="font-size: 1.4rem;">📰</span><span>Notícias</span>
+                    </div>
+                    <div class="phone-app-icon" onclick="tocarSomClique(); abrirApp('contacts')">
+                        <span style="font-size: 1.4rem;">👥</span><span>Contatos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPS DO CELULAR -->
+            <div id="phoneWhatsappView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #25d366; display: flex; justify-content: space-between;">
+                    <span>💬 WhatsApp</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="whatsappContactsList" style="display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneWhatsappChatView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #25d366; display: flex; justify-content: space-between;">
+                    <span id="chatContactTitle">💬 Chat</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarParaListaWhatsapp()">⬅️ Contatos</span>
+                </div>
+                <div id="whatsappChatContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+                <div style="display: flex; gap: 6px; margin-top: 6px;">
+                    <input type="text" id="whatsappInput" placeholder="Mensagem..." style="flex: 1; padding: 6px; font-size: 0.75rem;">
+                    <button class="menu-btn confirm-btn" style="width: auto; padding: 6px 12px; margin: 0; font-size: 0.75rem;" onclick="tocarSomClique(); enviarMensagemWhatsapp()">Enviar</button>
+                </div>
+            </div>
+
+            <div id="phoneInstagramView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #e1306c; display: flex; justify-content: space-between;">
+                    <span>📸 Instagram</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div style="background: #162032; padding: 6px; border-radius: 4px; display: flex; flex-direction: column; gap: 4px;">
+                    <input type="text" id="instaPostInput" placeholder="Legenda..." style="padding: 6px; font-size: 0.75rem;">
+                    <button class="menu-btn" style="background: #e1306c; width: 100%; font-size: 0.75rem; padding: 6px; margin: 0;" onclick="tocarSomClique(); publicarNoInstagram()">Publicar 📸</button>
+                </div>
+                <div id="instagramContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneSpotifyView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #1db954; display: flex; justify-content: space-between;">
+                    <span>🎵 Spotify</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="spotifyStatus" style="background: #111827; padding: 8px; border-radius: 4px; font-size: 0.75rem; text-align: center; color: #1db954; font-weight: bold;">🎧 Nenhuma música</div>
+                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto;">
+                    <div class="spotify-track" onclick="tocarMusicaSpotifyCompleta('champions')"><span>🎶 Champions Remix</span><span>▶️</span></div>
+                    <div class="spotify-track" onclick="tocarMusicaSpotifyCompleta('trap')"><span>🎶 Trap do Craque</span><span>▶️</span></div>
+                    <div class="spotify-track" onclick="tocarMusicaSpotifyCompleta('funk')"><span>🎶 Vestiário Funk</span><span>▶️</span></div>
+                    <div class="spotify-track" onclick="tocarMusicaSpotifyCompleta('lofi')"><span>🎶 Lo-Fi Focado</span><span>▶️</span></div>
+                </div>
+            </div>
+
+            <div id="phoneGalleryView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #3b82f6; display: flex; justify-content: space-between;">
+                    <span>🖼️ Galeria</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="galleryContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneShopView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #f1c40f; display: flex; justify-content: space-between;">
+                    <span>🛍️ Loja Luxo</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="shopContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneInterviewsView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #e67e22; display: flex; justify-content: space-between;">
+                    <span>🎤 Imprensa</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="interviewContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneNewsView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #3b82f6; display: flex; justify-content: space-between;">
+                    <span>📰 Notícias</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div id="newsContent" style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;"></div>
+            </div>
+
+            <div id="phoneContactsView" class="phone-body phone-app-view">
+                <div style="background: #1e293b; padding: 6px; font-weight: bold; border-radius: 4px; color: #f1c40f; display: flex; justify-content: space-between;">
+                    <span>👥 Contatos</span><span style="cursor: pointer;" onclick="tocarSomClique(); voltarHomeCelular()">⬅️ Voltar</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;">
+                    <div class="chat-msg"><b>Família:</b> "Filho, jogue com o coração!"</div>
+                    <div class="chat-msg"><b>Treinador:</b> "Conto com tua frieza nos pênaltis."</div>
+                    <div class="chat-msg"><b>Maria:</b> "Boa sorte no jogo de hoje! Vou estar a torcer por ti! ❤️"</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERFIL DA CARREIRA -->
+        <div id="career-stats-screen">
+            <div class="menu-title">PERFIL DO CRAQUE</div>
+            <div class="stats-container" id="careerStatsContent"></div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); voltarDeEstatisticas()">VOLTAR AO HUB ↩️</button>
+        </div>
+
+        <!-- ESTATÍSTICAS GERAIS -->
+        <div id="stats-screen">
+            <div class="menu-title">ESTATÍSTICAS</div>
+            <div class="menu-subtitle" style="color: #f1c40f;">O teu histórico</div>
+            <div class="stats-container" id="statsContainerContent"></div>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarDeEstatisticas()">VOLTAR</button>
+        </div>
+
+        <!-- CONQUISTAS -->
+        <div id="achievements-screen">
+            <div class="menu-title">CONQUISTAS</div>
+            <div class="menu-subtitle" style="color: #f1c40f;" id="achievementsCounter">Desbloqueadas: 0 / 20</div>
+            <div class="stats-container" id="achievementsContainerContent"></div>
+            <button class="menu-btn" style="background: #e74c3c;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- TABELA DA LIGA -->
+        <div id="table-screen">
+            <div class="menu-title" id="tableTitle">CLASSIFICAÇÃO</div>
+            <div class="menu-subtitle" id="tableSubtitle" style="color: #f1c40f;">Rodada 1 / 20</div>
+            <div class="table-wrapper">
+                <table class="league-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 35px;">Pos</th>
+                            <th style="text-align: left; padding-left: 8px;">Clube</th>
+                            <th style="width: 35px;">Pts</th>
+                            <th style="width: 30px;">J</th>
+                            <th style="width: 35px;">SG</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <button class="menu-btn confirm-btn" id="tableNextBtn" onclick="tocarSomClique(); voltarDoHubTabela()">VOLTAR AO HUB ↩️</button>
+        </div>
+
+        <!-- SELEÇÃO CONTINENTAL -->
+        <div id="continental-select-screen">
+            <div class="menu-title">CONTINENTAL</div>
+            <div class="select-group">
+                <div class="select-label">TORNEIO:</div>
+                <select id="continentalSelect" onchange="atualizarTimesContinental()">
+                    <option value="Libertadores">Copa Libertadores</option>
+                    <option value="Champions">UEFA Champions League</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">O SEU CLUBE:</div>
+                <select id="continentalTeamSelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); iniciarContinental()">INICIAR 🏆</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- SELEÇÃO LIGA -->
+        <div id="league-select-screen">
+            <div class="menu-title">MODO LIGA</div>
+            <div class="select-group">
+                <div class="select-label">CAMPEONATO:</div>
+                <select id="leagueSelect" onchange="atualizarTimesLiga()">
+                    <option value="Brasil">Brasileirão</option>
+                    <option value="Argentina">Liga Profissional</option>
+                    <option value="Mexico">Liga MX</option>
+                    <option value="Colombia">Liga BetPlay</option>
+                    <option value="Chile">Campeonato Chileno</option>
+                    <option value="Inglaterra">Premier League</option>
+                    <option value="Espanha">La Liga</option>
+                    <option value="Italia">Serie A</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">O SEU CLUBE:</div>
+                <select id="leagueTeamSelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); iniciarLiga()">INICIAR LIGA</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- SELEÇÃO TORNEIO -->
+        <div id="tournament-select-screen">
+            <div class="menu-title">COPA NACIONAL</div>
+            <div class="select-group">
+                <div class="select-label">COMPETIÇÃO:</div>
+                <select id="tournamentSelect" onchange="atualizarTimesTorneio()">
+                    <option value="Brasil">Copa do Brasil</option>
+                    <option value="Argentina">Copa da Argentina</option>
+                    <option value="Mexico">Copa do México</option>
+                    <option value="Colombia">Copa da Colômbia</option>
+                    <option value="Chile">Copa do Chile</option>
+                    <option value="Inglaterra">Copa da Inglaterra</option>
+                    <option value="Espanha">Copa da Espanha</option>
+                    <option value="Italia">Copa da Itália</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">O SEU CLUBE:</div>
+                <select id="tournamentTeamSelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); iniciarTorneio()">INICIAR COPA</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- CHAVEAMENTO -->
+        <div id="bracket-screen">
+            <div class="menu-title" id="bracketTitle">CHAVEAMENTO</div>
+            <div class="bracket-container" id="bracketContent"></div>
+            <button class="menu-btn confirm-btn" id="bracketNextBtn" onclick="tocarSomClique(); avancarDoChaveamentoParaJogo()">IR PARA O JOGO ⚽</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">ABANDONAR</button>
+        </div>
+
+        <!-- SELEÇÃO PARTIDA RÁPIDA -->
+        <div id="team-select-screen">
+            <div class="menu-title">PARTIDA RÁPIDA</div>
+            <div class="select-group">
+                <div class="select-label">LIGA / PAÍS:</div>
+                <select id="ligaRapidaSelect" onchange="atualizarTimesPartidaRapida()">
+                    <option value="Brasil">Brasil</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Mexico">México</option>
+                    <option value="Colombia">Colômbia</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Inglaterra">Inglaterra</option>
+                    <option value="Espanha">Espanha</option>
+                    <option value="Italia">Itália</option>
+                </select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">O SEU CLUBE:</div>
+                <select id="playerTeamSelect"></select>
+            </div>
+            <div class="select-group">
+                <div class="select-label">ADVERSÁRIO (CPU):</div>
+                <select id="cpuTeamSelect"></select>
+            </div>
+            <button class="menu-btn confirm-btn" onclick="tocarSomClique(); iniciarJogoComTimes()">AVANÇAR</button>
+            <button class="menu-btn" style="background: #c0392b;" onclick="tocarSomClique(); voltarMenuPrincipal()">VOLTAR</button>
+        </div>
+
+        <!-- JOGO -->
+        <div id="game-screen">
+            <div class="game-title" id="round-indicator">Rodada 1/5 - Sua Vez de Chutar</div>
+            <div id="turnAlertBanner" class="turn-alert-banner">⚡ SUA VEZ DE CHUTAR!</div>
+
+            <div class="penalty-scoreboard" id="scoreboardContainer">
+                <div class="score-row">
+                    <span class="team-name-display" id="cpuTeamLabel">CPU</span>
+                    <div class="penalty-dots" id="cpu-dots">
+                        <span class="dot" id="cpu-dot-0"></span><span class="dot" id="cpu-dot-1"></span><span class="dot" id="cpu-dot-2"></span><span class="dot" id="cpu-dot-3"></span><span class="dot" id="cpu-dot-4"></span>
+                    </div>
+                    <span class="score-number" id="cpu-score-num">0</span>
+                </div>
+                <div class="score-row">
+                    <span class="team-name-display" id="playerTeamLabel">VOCÊ</span>
+                    <div class="penalty-dots" id="player-dots">
+                        <span class="dot" id="player-dot-0"></span><span class="dot" id="player-dot-1"></span><span class="dot" id="player-dot-2"></span><span class="dot" id="player-dot-3"></span><span class="dot" id="player-dot-4"></span>
+                    </div>
+                    <span class="score-number" id="player-score-num">0</span>
+                </div>
+            </div>
+
+            <div class="timer-bar" id="timerBar"><div class="timer-fill" id="timerFill"></div></div>
+
+            <div class="stadium" id="stadium">
+                <div class="goal-3d"></div>
+                <div id="goalkeeper" class="gk">🧤</div>
+                <div id="ball" class="ball">⚽</div>
+                <div id="celebrationOverlay" class="celebration-overlay">
+                    <div class="menu-title" id="celebrationText" style="font-size: 1.1rem; margin-bottom: 12px;">PARABÉNS!</div>
+                    <div style="font-size: 2.8rem;">🏆</div>
+                </div>
+            </div>
+
+            <div id="message">⚡ Escolha o canto!</div>
+
+            <div id="choicePanel" class="choice-panel">
+                <button class="choice-btn" onclick="tocarSomClique(); escolherDirecao('esquerda')">👈 ESQUERDA</button>
+                <button class="choice-btn" onclick="tocarSomClique(); escolherDirecao('centro')">⬆️ CENTRO</button>
+                <button class="choice-btn" onclick="tocarSomClique(); escolherDirecao('direita')">👉 DIREITA</button>
+            </div>
+            
+            <div id="controls" class="controls-btns">
+                <button class="btn-action btn-again" id="againBtn" onclick="tocarSomClique(); continuarOuReiniciar()">Próxima</button>
+                <button class="btn-action btn-menu" id="menuBtn" onclick="tocarSomClique(); voltarMenu()">Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let somLigado = true;
+        let menuMusicInterval = null;
+
+        function alternarSom() {
+            somLigado = !somLigado;
+            let btn = document.getElementById('soundToggleBtn');
+            if (somLigado) {
+                btn.innerText = "LIGADO 🔊";
+                btn.style.background = "#27ae60";
+                iniciarMusicaMenu();
+            } else {
+                btn.innerText = "DESLIGADO 🔇";
+                btn.style.background = "#c0392b";
+                pararMusicaMenu();
+            }
+        }
+
+        function abrirConfiguracoes() {
+            menuScreen.style.display = 'none';
+            document.getElementById('settings-screen').style.display = 'flex';
+        }
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function tocarSomClique() {
+            if (!somLigado) return;
+            try {
+                let ctx = getAudioContext();
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        function tocarSomApito() {
+            if (!somLigado) return;
+            try {
+                let ctx = getAudioContext();
+                let osc1 = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc1.frequency.setValueAtTime(2400, ctx.currentTime);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                osc1.connect(gain); gain.connect(ctx.destination);
+                osc1.start(); osc1.stop(ctx.currentTime + 0.25);
+            } catch(e) {}
+        }
+
+        function tocarSomChute() {
+            if (!somLigado) return;
+            try {
+                let ctx = getAudioContext();
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function tocarSomGol() {
+            if (!somLigado) return;
+            try {
+                let ctx = getAudioContext();
+                [300, 400, 500, 650].forEach((freq, i) => {
+                    let osc = ctx.createOscillator();
+                    let gain = ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.15);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.1); osc.stop(ctx.currentTime + i * 0.1 + 0.15);
+                });
+            } catch(e) {}
+        }
+
+        function tocarSomDefesa() {
+            if (!somLigado) return;
+            try {
+                let ctx = getAudioContext();
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.2);
+            } catch(e) {}
+        }
+
+        function ativarMusicaMenuGlobal() {
+            if (menuScreen.style.display !== 'none' && !menuMusicInterval && somLigado) iniciarMusicaMenu();
+        }
+
+        function iniciarMusicaMenu() {
+            if (menuMusicInterval) return;
+            let acordes = [261.63, 329.63, 392.00, 523.25, 440.00, 349.23];
+            let step = 0;
+            menuMusicInterval = setInterval(() => {
+                if (!somLigado || menuScreen.style.display === 'none') return;
+                try {
+                    let ctx = getAudioContext();
+                    let osc = ctx.createOscillator();
+                    let gain = ctx.createGain();
+                    osc.frequency.setValueAtTime(acordes[step % acordes.length], ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(); osc.stop(ctx.currentTime + 0.8);
+                    step++;
+                } catch(e) {}
+            }, 1000);
+        }
+
+        function pararMusicaMenu() {
+            if (menuMusicInterval) { clearInterval(menuMusicInterval); menuMusicInterval = null; }
+        }
+
+        let stats = JSON.parse(localStorage.getItem('caldeirao_stats')) || {
+            partidasJogadas: 0, vitorias: 0, derrotas: 0, golosMarcados: 0,
+            penaltisDefendidos: 0, titulosConquistados: 0, dinheiroMilhoes: 0, itensComprados: [], moralImprensa: 50
+        };
+
+        let carreira = JSON.parse(localStorage.getItem('caldeirao_carreira')) || null;
+        let origemAberto = 'menu';
+
+        const selecoesPorTorneio = {
+            "CopaDoMundo": ["Brasil", "Argentina", "França", "Inglaterra", "Alemanha", "Espanha", "Portugal", "Itália", "Holanda", "Bélgica", "Uruguai", "Croácia", "México", "Estados Unidos", "Japão", "Marrocos"],
+            "Eurocopa": ["Inglaterra", "França", "Espanha", "Alemanha", "Portugal", "Itália", "Holanda", "Bélgica", "Croácia", "Dinamarca", "Suíça", "Áustria", "Turquia", "Suécia", "Sérvia", "Polônia"],
+            "CopaAmerica": ["Brasil", "Argentina", "Uruguai", "Colômbia", "Chile", "México", "Estados Unidos", "Peru", "Equador", "Paraguai", "Venezuela", "Bolívia"]
+        };
+
+        const listaConquistas = [
+            { id: 'golo_1', nome: 'Primeiro Golo', desc: 'Marque o seu 1º golo.', icone: '⚽', check: () => stats.golosMarcados >= 1 },
+            { id: 'golo_10', nome: 'Artilheiro', desc: 'Marque 10 golos na carreira.', icone: '🎯', check: () => stats.golosMarcados >= 10 },
+            { id: 'golo_50', nome: 'Goleador nato', desc: 'Marque 50 golos na carreira.', icone: '🔥', check: () => stats.golosMarcados >= 50 },
+            { id: 'defesa_1', nome: 'Luvas de Aço', desc: 'Defenda o seu 1º penálti.', icone: '🧤', check: () => stats.penaltisDefendidos >= 1 },
+            { id: 'defesa_10', nome: 'Paredão', desc: 'Defenda 10 penáltis.', icone: '🛡️', check: () => stats.penaltisDefendidos >= 10 },
+            { id: 'partida_1', nome: 'Estreia', desc: 'Jogue a sua 1ª partida.', icone: '👟', check: () => stats.partidasJogadas >= 1 },
+            { id: 'vitoria_1', nome: 'Vitória', desc: 'Conquiste a sua 1ª vitória.', icone: '✌️', check: () => stats.vitorias >= 1 },
+            { id: 'titulo_1', nome: 'Primeira Taça', desc: 'Conquiste o seu 1º título.', icone: '🏆', check: () => stats.titulosConquistados >= 1 },
+            { id: 'dinheiro_1', nome: 'Primeiro Milhão', desc: 'Acumule R$ 1 Milhão.', icone: '💵', check: () => stats.dinheiroMilhoes >= 1 }
+        ];
+
+        function salvarStats() { localStorage.setItem('caldeirao_stats', JSON.stringify(stats)); }
+        function salvarCarreira() { localStorage.setItem('caldeirao_carreira', JSON.stringify(carreira)); }
+        function salvarCarreiraManual() { salvarCarreira(); alert("💾 Carreira salva com sucesso!"); }
+
+        function clicarModoCarreira() {
+            pararMusicaMenu();
+            menuScreen.style.display = 'none';
+            if (carreira && carreira.idade <= 35) {
+                document.getElementById('careerMenuInfo').innerHTML = `<b>Atleta:</b> ${carreira.nomeJogador}<br><b>Clube:</b> ${carreira.clube} (${carreira.pais})<br><b>Idade:</b> ${carreira.idade} anos`;
+                document.getElementById('career-menu-screen').style.display = 'flex';
+            } else {
+                iniciarModoCarreira();
+            }
+        }
+
+        function continuarCarreiraSalva() {
+            document.getElementById('career-menu-screen').style.display = 'none';
+            abrirHubCarreira();
+        }
+
+        function iniciarNovaCarreiraConfirmada() {
+            document.getElementById('career-menu-screen').style.display = 'none';
+            carreira = null;
+            localStorage.removeItem('caldeirao_carreira');
+            iniciarModoCarreira();
+        }
+
+        function abrirMenuPaises() {
+            pararMusicaMenu();
+            menuScreen.style.display = 'none';
+            document.getElementById('country-select-screen').style.display = 'flex';
+            atualizarSelecoesPais();
+        }
+
+        function atualizarSelecoesPais() {
+            let tipo = document.getElementById('countryTournamentSelect').value;
+            let pSelect = document.getElementById('playerCountrySelect');
+            pSelect.innerHTML = '';
+            selecoesPorTorneio[tipo].forEach(sel => {
+                let opt = document.createElement('option'); opt.value = sel; opt.innerText = sel; pSelect.appendChild(opt);
+            });
+        }
+
+        function iniciarModoPaises() {
+            let tipo = document.getElementById('countryTournamentSelect').value;
+            playerTeam = document.getElementById('playerCountrySelect').value;
+            gameMode = tipo; 
+            faseTorneioIndex = 0;
+            let pool = selecoesPorTorneio[tipo].filter(s => s !== playerTeam);
+            pool.sort(() => Math.random() - 0.5);
+            adversariosTorneio = pool.slice(0, 4);
+            cpuTeam = adversariosTorneio[faseTorneioIndex];
+            tocarSomApito();
+            mostrarChaveamento();
+        }
+
+        function abrirConquistas() {
+            pararMusicaMenu();
+            menuScreen.style.display = 'none';
+            document.getElementById('achievements-screen').style.display = 'flex';
+            let desbloqueadas = 0, html = '';
+            listaConquistas.forEach(conq => {
+                let status = conq.check();
+                if (status) desbloqueadas++;
+                html += `
+                    <div class="achievement-card ${status ? 'unlocked' : ''}">
+                        <div class="achievement-icon">${conq.icone}</div>
+                        <div class="achievement-info"><span class="achievement-name">${conq.nome}</span><span class="achievement-desc">${conq.desc}</span></div>
+                        <span class="achievement-status" style="color: ${status ? '#2ecc71' : '#94a3b8'};">${status ? '✅' : '🔒'}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('achievementsCounter').innerText = `Desbloqueadas: ${desbloqueadas} / ${listaConquistas.length}`;
+            document.getElementById('achievementsContainerContent').innerHTML = html;
+        }
+
+        function abrirEstatisticasFromMenu() {
+            pararMusicaMenu();
+            origemAberto = 'menu';
+            abrirEstatisticasGeral();
+        }
+
+        function abrirEstatisticasFromCareer() {
+            origemAberto = 'career';
+            document.getElementById('career-hub-screen').style.display = 'none';
+            document.getElementById('career-stats-screen').style.display = 'flex';
+            let salario = carreira.idade * 250000;
+            let html = `
+                <div class="stat-card"><span class="stat-label">Nome</span><span class="stat-value" style="color: #2ecc71;">${carreira.nomeJogador}</span></div>
+                <div class="stat-card"><span class="stat-label">Idade</span><span class="stat-value">${carreira.idade} anos</span></div>
+                <div class="stat-card"><span class="stat-label">Clube</span><span class="stat-value">${carreira.clube} (${carreira.pais})</span></div>
+                <div class="stat-card"><span class="stat-label">Golos</span><span class="stat-value">${stats.golosMarcados}</span></div>
+                <div class="stat-card"><span class="stat-label">Salário Anual</span><span class="stat-value" style="color: #f1c40f;">R$ ${salario.toLocaleString()}</span></div>
+                <div class="stat-card"><span class="stat-label">Dinheiro</span><span class="stat-value" style="color: #2ecc71;">R$ ${stats.dinheiroMilhoes}M</span></div>
+                <div class="stat-card"><span class="stat-label">Títulos</span><span class="stat-value" style="color: #f1c40f;">${stats.titulosConquistados}</span></div>
+            `;
+            document.getElementById('careerStatsContent').innerHTML = html;
+        }
+
+        function abrirEstatisticasGeral() {
+            menuScreen.style.display = 'none';
+            document.getElementById('career-hub-screen').style.display = 'none';
+            document.getElementById('stats-screen').style.display = 'flex';
+            let html = `
+                <div class="stat-card"><span class="stat-label">Dinheiro Ganho</span><span class="stat-value" style="color: #2ecc71;">R$ ${stats.dinheiroMilhoes}M</span></div>
+                <div class="stat-card"><span class="stat-label">Partidas Jogadas</span><span class="stat-value">${stats.partidasJogadas}</span></div>
+                <div class="stat-card"><span class="stat-label">Vitórias</span><span class="stat-value" style="color: #2ecc71;">${stats.vitorias}</span></div>
+                <div class="stat-card"><span class="stat-label">Derrotas</span><span class="stat-value" style="color: #e74c3c;">${stats.derrotas}</span></div>
+                <div class="stat-card"><span class="stat-label">Golos Marcados</span><span class="stat-value">${stats.golosMarcados}</span></div>
+                <div class="stat-card"><span class="stat-label">Penáltis Defendidos</span><span class="stat-value">${stats.penaltisDefendidos}</span></div>
+                <div class="stat-card"><span class="stat-label">Títulos</span><span class="stat-value" style="color: #f1c40f;">${stats.titulosConquistados}</span></div>
+            `;
+            document.getElementById('statsContainerContent').innerHTML = html;
+        }
+
+        function voltarDeEstatisticas() {
+            document.getElementById('stats-screen').style.display = 'none';
+            document.getElementById('career-stats-screen').style.display = 'none';
+            if (origemAberto === 'career') {
+                document.getElementById('career-hub-screen').style.display = 'flex';
+            } else {
+                menuScreen.style.display = 'flex';
+                iniciarMusicaMenu();
+            }
+        }
+
+        function iniciarModoCarreira() { document.getElementById('career-intro-screen').style.display = 'flex'; }
+        function irParaEscolhaPaisCarreira() {
+            document.getElementById('career-intro-screen').style.display = 'none';
+            document.getElementById('career-country-screen').style.display = 'flex';
+        }
+        function irParaEscolhaTimeCarreira() {
+            let pais = document.getElementById('careerCountrySelect').value;
+            let tSelect = document.getElementById('careerTeamSelect');
+            tSelect.innerHTML = '';
+            timesPorLiga[pais].forEach(time => {
+                let opt = document.createElement('option'); opt.value = time; opt.innerText = time; tSelect.appendChild(opt);
+            });
+            document.getElementById('career-country-screen').style.display = 'none';
+            document.getElementById('career-team-screen').style.display = 'flex';
+        }
+
+        function comecarCarreiraOficial() {
+            let nome = document.getElementById('careerPlayerNameInput').value.trim() || "Luis Felipe";
+            let pais = document.getElementById('careerCountrySelect').value;
+            let time = document.getElementById('careerTeamSelect').value;
+            carreira = {
+                nomeJogador: nome, idade: 16, paisInicial: pais, pais: pais, clube: time,
+                etapa: 'liga', rodadaLiga: 1,
+                tabelaLiga: timesPorLiga[pais].map(n => ({ nome: n, pontos: 0, jogos: 0, sg: 0 })),
+                adversariosLigaRodadas: [], posicaoFinalLiga: 0, faseContinentalIndex: 0,
+                adversariosContinental: [], faseCopaIndex: 0, adversariosCopa: [], pendenteEntrevista: false
+            };
+            let advs = timesPorLiga[pais].filter(t => t !== time);
+            for (let i = 0; i < 20; i++) carreira.adversariosLigaRodadas.push(advs[Math.floor(Math.random() * advs.length)]);
+            salvarCarreira();
+            abrirHubCarreira();
+        }
+
+        function abrirHubCarreira() {
+            document.getElementById('career-team-screen').style.display = 'none';
+            document.getElementById('career-intro-screen').style.display = 'none';
+            document.getElementById('career-country-screen').style.display = 'none';
+            document.getElementById('table-screen').style.display = 'none';
+            document.getElementById('career-stats-screen').style.display = 'none';
+            document.getElementById('phone-screen').style.display = 'none';
+            document.getElementById('simulation-popup-screen').style.display = 'none';
+            menuScreen.style.display = 'none';
+            document.getElementById('career-hub-screen').style.display = 'flex';
+
+            if (carreira.idade > 35) {
+                document.getElementById('careerHubTitle').innerText = "FIM DA CARREIRA!";
+                document.getElementById('careerHubSubtitle').innerText = `${carreira.nomeJogador} encerrou a jornada!`;
+                document.getElementById('careerHubContent').innerHTML = `<div class="stat-card"><span class="stat-label">Parabéns! Completaste a tua carreira lendária!</span></div>`;
+                document.getElementById('careerActionBtn').innerText = "NOVA CARREIRA 🌟";
+                document.getElementById('careerExtraButtons').style.display = 'none';
+                document.getElementById('careerActionBtn').onclick = () => { carreira = null; localStorage.removeItem('caldeirao_carreira'); iniciarModoCarreira(); };
+                return;
+            }
+
+            document.getElementById('careerHubTitle').innerText = `CARREIRA - ${carreira.clube}`;
+            document.getElementById('careerHubSubtitle').innerText = `${carreira.nomeJogador} | ${carreira.idade} anos | ${carreira.pais}`;
+
+            let textoEtapa = "";
+            if (carreira.etapa === 'liga') textoEtapa = `Jogar Liga (Rodada ${carreira.rodadaLiga} / 20)`;
+            else if (carreira.etapa === 'continental') textoEtapa = `Jogar Continental`;
+            else if (carreira.etapa === 'copa') textoEtapa = `Jogar Copa Nacional`;
+            else if (carreira.etapa === 'copa_do_mundo') textoEtapa = `Copa do Mundo pela Seleção`;
+            else if (carreira.etapa === 'proposta') textoEtapa = `Analisar Proposta`;
+
+            let html = `
+                <div class="stat-card"><span class="stat-label">Próximo Passo</span><span class="stat-value" style="color: #2ecc71;">${textoEtapa}</span></div>
+                <div class="stat-card"><span class="stat-label">Títulos</span><span class="stat-value">${stats.titulosConquistados}</span></div>
+                <div class="stat-card"><span class="stat-label">Dinheiro</span><span class="stat-value">R$ ${stats.dinheiroMilhoes}M</span></div>
+            `;
+            document.getElementById('careerHubContent').innerHTML = html;
+            document.getElementById('careerActionBtn').innerText = carreira.etapa === 'proposta' ? "VER PROPOSTA ✉️" : "CONTINUAR JORNADA ⚽";
+            document.getElementById('careerActionBtn').onclick = executarProximaFaseCarreira;
+            document.getElementById('careerExtraButtons').style.display = carreira.etapa === 'liga' ? 'flex' : 'none';
+        }
+
+        function abrirCelular() {
+            document.getElementById('career-hub-screen').style.display = 'none';
+            document.getElementById('phone-screen').style.display = 'flex';
+            voltarHomeCelular();
+        }
+
+        function fecharCelular() {
+            document.getElementById('phone-screen').style.display = 'none';
+            abrirHubCarreira();
+        }
+
+        function voltarHomeCelular() {
+            document.getElementById('phoneHomeView').style.display = 'flex';
+            document.querySelectorAll('.phone-app-view').forEach(v => v.style.display = 'none');
+        }
+
+        function abrirApp(app) {
+            document.getElementById('phoneHomeView').style.display = 'none';
+            if (app === 'whatsapp') { document.getElementById('phoneWhatsappView').style.display = 'flex'; atualizarListaContatosWhatsapp(); }
+            if (app === 'instagram') { document.getElementById('phoneInstagramView').style.display = 'flex'; atualizarInstagramFeed(); }
+            if (app === 'spotify') document.getElementById('phoneSpotifyView').style.display = 'flex';
+            if (app === 'gallery') { document.getElementById('phoneGalleryView').style.display = 'flex'; atualizarGaleria(); }
+            if (app === 'shop') { document.getElementById('phoneShopView').style.display = 'flex'; atualizarLojaLuxo(); }
+            if (app === 'interviews') { document.getElementById('phoneInterviewsView').style.display = 'flex'; atualizarEntrevistas(); }
+            if (app === 'news') document.getElementById('phoneNewsView').style.display = 'flex';
+            if (app === 'contacts') document.getElementById('phoneContactsView').style.display = 'flex';
+        }
+
+        let conversasWhatsapp = {
+            "Mãe": [{ remetente: 'Mãe', texto: "Filho, estou vendo teu jogo!" }],
+            "Treinador": [{ remetente: 'Treinador', texto: "Foco nos penáltis de hoje!" }],
+            "Maria": [{ remetente: 'Maria', texto: "Boa sorte no jogo de hoje! Vou estar a torcer por ti! ❤️" }]
+        };
+        let contatoAtualWhatsapp = "";
+
+        function atualizarListaContatosWhatsapp() {
+            let html = '';
+            for (let c in conversasWhatsapp) {
+                html += `<div class="whatsapp-contact-item" onclick="tocarSomClique(); abrirChatWhatsapp('${c}')"><span style="font-size: 1.3rem;">👤</span><div><b>${c}</b></div></div>`;
+            }
+            document.getElementById('whatsappContactsList').innerHTML = html;
+        }
+
+        function abrirChatWhatsapp(c) {
+            contatoAtualWhatsapp = c;
+            document.getElementById('phoneWhatsappView').style.display = 'none';
+            document.getElementById('phoneWhatsappChatView').style.display = 'flex';
+            document.getElementById('chatContactTitle').innerText = `💬 ${c}`;
+            atualizarWhatsappChatMensagens();
+        }
+
+        function voltarParaListaWhatsapp() {
+            document.getElementById('phoneWhatsappChatView').style.display = 'none';
+            document.getElementById('phoneWhatsappView').style.display = 'flex';
+        }
+
+        function atualizarWhatsappChatMensagens() {
+            let html = '';
+            (conversasWhatsapp[contatoAtualWhatsapp] || []).forEach(m => {
+                html += `<div class="chat-msg ${m.enviadoPorMim ? 'sent' : ''}">${m.texto}</div>`;
+            });
+            document.getElementById('whatsappChatContent').innerHTML = html;
+        }
+
+        function enviarMensagemWhatsapp() {
+            let input = document.getElementById('whatsappInput');
+            let t = input.value.trim();
+            if (!t || !contatoAtualWhatsapp) return;
+            conversasWhatsapp[contatoAtualWhatsapp].push({ texto: t, enviadoPorMim: true });
+            input.value = "";
+            atualizarWhatsappChatMensagens();
+            
+            setTimeout(() => {
+                let respostasPossiveis = [
+                    "Com certeza, craque!",
+                    "Foco total no próximo jogo!",
+                    "Vou estar a torcer muito por ti! ⚽",
+                    "Treinar forte para ser campeão!",
+                    "Isso mesmo, rumo à vitória!"
+                ];
+                let respostaEscolhida = respostasPossiveis[Math.floor(Math.random() * respostasPossiveis.length)];
+                
+                conversasWhatsapp[contatoAtualWhatsapp].push({ texto: respostaEscolhida });
+                atualizarWhatsappChatMensagens();
+            }, 800);
+        }
+
+        let instagramPosts = [{ autor: "futebol_fc", legenda: "Grande promessa em destaque! 👁️", gostos: 1200, curtido: false }];
+        function atualizarInstagramFeed() {
+            let html = '';
+            instagramPosts.forEach((p, i) => {
+                html += `<div class="insta-post"><b>@${p.autor}</b><br>${p.legenda}<br><span style="cursor: pointer; color: ${p.curtido?'#e1306c':'#888'};" onclick="tocarSomClique(); curtirPost(${i})">❤️ ${p.gostos}</span></div>`;
+            });
+            document.getElementById('instagramContent').innerHTML = html;
+        }
+        function publicarNoInstagram() {
+            let input = document.getElementById('instaPostInput');
+            if(!input.value.trim()) return;
+            instagramPosts.unshift({ autor: carreira?carreira.nomeJogador.toLowerCase():'craque', legenda: input.value, gostos: 10, curtido: false });
+            input.value = "";
+            atualizarInstagramFeed();
+        }
+        function curtirPost(i) {
+            instagramPosts[i].curtido = !instagramPosts[i].curtido;
+            instagramPosts[i].gostos += instagramPosts[i].curtido ? 1 : -1;
+            atualizarInstagramFeed();
+        }
+
+        function tocarMusicaSpotifyCompleta(t) {
+            document.getElementById('spotifyStatus').innerText = `🎶 A tocar: ${t}`;
+        }
+
+        const itensLoja = [
+            { id: 'chuteira', nome: 'Chuteiras Ouro 🪙', preco: 1, desc: 'Precisão nos penáltis' },
+            { id: 'carro', nome: 'Supercarro 🏎️', preco: 3, desc: 'Prestígio com adeptos' },
+            { id: 'mansao', nome: 'Mansão 🏖️', preco: 6, desc: 'Conforto total' }
+        ];
+
+        function atualizarLojaLuxo() {
+            let html = `<div style="font-size: 0.75rem; color: #2ecc71; font-weight: bold;">Saldo: R$ ${stats.dinheiroMilhoes}M</div>`;
+            itensLoja.forEach(item => {
+                let comp = stats.itensComprados && stats.itensComprados.includes(item.id);
+                html += `<div class="shop-card"><div><b>${item.nome}</b><div style="font-size:0.68rem; color:#94a3b8;">${item.desc}</div></div>${comp?'✅':`<button class="menu-btn confirm-btn" style="width:auto; padding:4px 8px; margin:0; font-size:0.7rem;" onclick="comprarItemLoja('${item.id}',${item.preco})">${item.preco}M</button>`}</div>`;
+            });
+            document.getElementById('shopContent').innerHTML = html;
+        }
+
+        function comprarItemLoja(id, preco) {
+            if (stats.dinheiroMilhoes >= preco) {
+                stats.dinheiroMilhoes -= preco;
+                if (!stats.itensComprados) stats.itensComprados = [];
+                stats.itensComprados.push(id);
+                salvarStats();
+                atualizarLojaLuxo();
+                alert("🎉 Compra efetuada!");
+            } else { alert("❌ Dinheiro insuficiente!"); }
+        }
+
+        function atualizarEntrevistas() {
+            let c = document.getElementById('interviewContent');
+            if (!carreira || !carreira.pendenteEntrevista) {
+                c.innerHTML = `<div class="chat-msg">Sem entrevistas pendentes. Moral: ${stats.moralImprensa}%</div>`;
+                return;
+            }
+            c.innerHTML = `
+                <div class="chat-msg"><b>Jornalista:</b> "Como avalia o seu desempenho?"</div>
+                <button class="menu-btn confirm-btn" style="font-size:0.72rem; padding:6px;" onclick="responderEntrevista('elogio')">💬 "A equipa esteve impecável!"</button>
+                <button class="menu-btn" style="background:#e67e22; font-size:0.72rem; padding:6px; width:90%; margin-top:3px;" onclick="responderEntrevista('ousado')">💬 "Ninguém nos para!"</button>
+            `;
+        }
+        function responderEntrevista(tipo) {
+            stats.moralImprensa = Math.min(100, stats.moralImprensa + 10);
+            carreira.pendenteEntrevista = false;
+            salvarStats(); salvarCarreira();
+            atualizarEntrevistas();
+            alert("🌟 Resposta publicada com sucesso!");
+        }
+
+        function atualizarGaleria() {
+            document.getElementById('galleryContent').innerHTML = `
+                <div class="gallery-card"><span style="font-size: 1.6rem;">🏆</span><div><b>Taças: ${stats.titulosConquistados}</b></div></div>
+                <div class="gallery-card"><span style="font-size: 1.6rem;">⚽</span><div><b>Golos: ${stats.golosMarcados}</b></div></div>
+            `;
+        }
+
+        function verTabelaCarreira() {
+            origemAberto = 'career';
+            document.getElementById('career-hub-screen').style.display = 'none';
+            document.getElementById('table-screen').style.display = 'flex';
+            document.getElementById('tableTitle').innerText = `TABELA - ${carreira.pais}`;
+            document.getElementById('tableSubtitle').innerText = `Rodada ${carreira.rodadaLiga} / 20`;
+            carreira.tabelaLiga.sort((a, b) => b.pontos - a.pontos || b.sg - a.sg);
+            let html = '';
+            carreira.tabelaLiga.forEach((t, i) => {
+                html += `<tr class="${t.nome===carreira.clube?'my-team':''}"><td><b>${i+1}º</b></td><td class="team-col">${t.nome}</td><td><b>${t.pontos}</b></td><td>${t.jogos}</td><td>${t.sg}</td></tr>`;
+            });
+            document.getElementById('tableBody').innerHTML = html;
+        }
+
+        function voltarDoHubTabela() {
+            document.getElementById('table-screen').style.display = 'none';
+            abrirHubCarreira();
+        }
+
+        function executarProximaFaseCarreira() {
+            if (carreira.etapa === 'liga') {
+                if (carreira.rodadaLiga > 20) {
+                    carreira.tabelaLiga.sort((a, b) => b.pontos - a.pontos || b.sg - a.sg);
+                    let pos = carreira.tabelaLiga.findIndex(t => t.nome === carreira.clube) + 1;
+                    if (pos === 1) { stats.titulosConquistados++; stats.dinheiroMilhoes++; salvarStats(); }
+                    carreira.etapa = pos <= 4 ? 'continental' : 'proposta';
+                    carreira.tabelaLiga = timesPorLiga[carreira.pais].map(n => ({ nome: n, pontos: 0, jogos: 0, sg: 0 }));
+                    carreira.rodadaLiga = 1;
+                    salvarCarreira();
+                    abrirHubCarreira();
+                    return;
+                }
+                if (carreira.idade < 21 && Math.random() < 0.4 && carreira.rodadaLiga < 20) {
+                    let p = Math.floor(Math.random() * 2) + 1;
+                    let antiga = carreira.rodadaLiga;
+                    carreira.rodadaLiga = Math.min(20, carreira.rodadaLiga + p);
+                    salvarCarreira();
+                    mostrarTelaSimulacao(antiga, carreira.rodadaLiga);
+                    return;
+                }
+                gameMode = 'career_league';
+                playerTeam = carreira.clube;
+                cpuTeam = carreira.adversariosLigaRodadas[carreira.rodadaLiga - 1];
+                document.getElementById('career-hub-screen').style.display = 'none';
+                iniciarTelaJogo();
+            } else if (carreira.etapa === 'continental') {
+                gameMode = 'career_continental';
+                playerTeam = carreira.clube;
+                cpuTeam = "Real Madrid";
+                document.getElementById('career-hub-screen').style.display = 'none';
+                iniciarTelaJogo();
+            } else if (carreira.etapa === 'proposta') {
+                alert("Analisando propostas de novos clubes...");
+                carreira.idade++;
+                carreira.etapa = 'liga';
+                carreira.rodadaLiga = 1;
+                salvarCarreira();
+                abrirHubCarreira();
+            }
+        }
+
+        function mostrarTelaSimulacao(antiga, nova) {
+            document.getElementById('career-hub-screen').style.display = 'none';
+            document.getElementById('simulation-popup-screen').style.display = 'flex';
+            document.getElementById('simulationPopupText').innerHTML = `Treinador poupou-te por ter ${carreira.idade} anos. Avançaste da Rodada ${antiga} para ${nova}.`;
+        }
+
+        function fecharTelaSimulacao() {
+            document.getElementById('simulation-popup-screen').style.display = 'none';
+            abrirHubCarreira();
+        }
+
+        /* LIGAS COM 20 CLUBES EXATAMENTE */
+        const timesPorLiga = {
+            "Brasil": ["Flamengo", "Palmeiras", "Ceará", "Vasco da Gama", "São Paulo", "Corinthians", "Fluminense", "Atlético-MG", "Internacional", "Grêmio", "Botafogo", "Cruzeiro", "Bahia", "Fortaleza", "Athletico-PR", "Red Bull Bragantino", "Santos", "Sport", "Juventude", "Vitória"],
+            "Argentina": ["River Plate", "Boca Juniors", "Racing Club", "Independiente", "San Lorenzo", "Vélez Sarsfield", "Estudiantes", "Talleres", "Lanús", "Defensa y Justicia", "Argentinos Juniors", "Huracán", "Belgrano", "Newell's Old Boys", "Rosario Central", "Godoy Cruz", "Atlético Tucumán", "Banfield", "Tigre", "Platense"],
+            "Mexico": ["Club América", "Tigres UANL", "Monterrey", "Guadalajara (Chivas)", "Cruz Azul", "Pumas UNAM", "Toluca", "Pachuca", "Santos Laguna", "León", "Atlas", "Necaxa", "Tijuana", "Juárez", "Mazatlán", "Puebla", "Querétaro", "San Luis", "Atlético Morelia", "Atlante"],
+            "Colombia": ["Millonarios", "Atlético Nacional", "América de Cali", "Junior de Barranquilla", "Santa Fe", "Independiente Medellín", "Deportivo Cali", "Once Caldas", "Deportes Tolima", "Deportivo Pereira", "Águilas Doradas", "La Equidad", "Atlético Bucaramanga", "Pasto", "Boyacá Chicó", "Envigado", "Alianza", "Jaguares", "Patriotas", "Unión Magdalena"],
+            "Chile": ["Colo-Colo", "Universidad de Chile", "Universidad Católica", "Palestino", "Huachipato", "Everton", "Coquimbo Unido", "Audax Italiano", "Ñublense", "Unión Española", "O'Higgins", "Cobresal", "La Serena", "Cobreloa", "Deportes Iquique", "Copiapó", "Magallanes", "San Luis", "Deportes Temuco", "Curicó Unido"],
+            "Inglaterra": ["Manchester City", "Arsenal", "Liverpool", "Manchester United", "Chelsea", "Tottenham", "Aston Villa", "Newcastle", "West Ham", "Brighton", "Crystal Palace", "Bournemouth", "Fulham", "Wolverhampton", "Everton", "Brentford", "Nottingham Forest", "Leicester City", "Ipswich Town", "Southampton"],
+            "Espanha": ["Real Madrid", "Barcelona", "Atlético de Madrid", "Athletic Club", "Real Sociedad", "Real Betis", "Villarreal", "Valencia", "Girona", "Osasuna", "Getafe", "Celta de Vigo", "Sevilla", "Mallorca", "Rayo Vallecano", "Alavés", "Las Palmas", "Valladolid", "Espanyol", "Leganés"],
+            "Italia": ["Inter de Milão", "AC Milan", "Juventus", "Napoli", "Atalanta", "Roma", "Lazio", "Fiorentina", "Bologna", "Torino", "Monza", "Genoa", "Lecce", "Verona", "Cagliari", "Empoli", "Udinese", "Parma", "Como", "Venezia"]
+        };
+
+        let gameMode = 'match', playerTeam = 'Flamengo', cpuTeam = 'River Plate';
+        let playerScore = 0, cpuScore = 0, turnPhase = 'player_shoot';
+        let playerHistory = [], cpuHistory = [];
+        let faseTorneioIndex = 0, adversariosTorneio = [];
+        let ligaAtual = 'Brasil', rodadaAtualLiga = 1, tabelaLiga = [], adversariosLigaRodadas = [];
+
+        const ball = document.getElementById('ball'), gk = document.getElementById('goalkeeper');
+        const message = document.getElementById('message'), menuScreen = document.getElementById('menu-screen');
+        const teamSelectScreen = document.getElementById('team-select-screen'), tournamentSelectScreen = document.getElementById('tournament-select-screen');
+        const continentalSelectScreen = document.getElementById('continental-select-screen'), leagueSelectScreen = document.getElementById('league-select-screen');
+        const countrySelectScreen = document.getElementById('country-select-screen'), tableScreen = document.getElementById('table-screen');
+        const bracketScreen = document.getElementById('bracket-screen'), gameScreen = document.getElementById('game-screen');
+        const controls = document.getElementById('controls'), roundIndicator = document.getElementById('round-indicator');
+        const turnAlertBanner = document.getElementById('turnAlertBanner'), timerBar = document.getElementById('timerBar'), timerFill = document.getElementById('timerFill');
+        const playerTeamLabel = document.getElementById('playerTeamLabel'), cpuTeamLabel = document.getElementById('cpuTeamLabel');
+        const celebrationOverlay = document.getElementById('celebrationOverlay');
+        const choicePanel = document.getElementById('choicePanel');
+
+        let timerInterval = null, canInteract = false;
+
+        function atualizarTimesPartidaRapida() {
+            let liga = document.getElementById('ligaRapidaSelect').value;
+            let pSelect = document.getElementById('playerTeamSelect'), cSelect = document.getElementById('cpuTeamSelect');
+            pSelect.innerHTML = ''; cSelect.innerHTML = '';
+            timesPorLiga[liga].forEach(t => {
+                pSelect.add(new Option(t, t)); cSelect.add(new Option(t, t));
+            });
+            if (cSelect.options.length > 1) cSelect.selectedIndex = 1;
+        }
+        function atualizarTimesTorneio() {
+            let liga = document.getElementById('tournamentSelect').value;
+            let tSelect = document.getElementById('tournamentTeamSelect');
+            tSelect.innerHTML = '';
+            timesPorLiga[liga].forEach(t => tSelect.add(new Option(t, t)));
+        }
+        function atualizarTimesContinental() {
+            let tipo = document.getElementById('continentalSelect').value;
+            let cSelect = document.getElementById('continentalTeamSelect');
+            cSelect.innerHTML = '';
+            let pool = tipo === 'Libertadores' ? [...timesPorLiga["Brasil"], ...timesPorLiga["Argentina"]] : [...timesPorLiga["Inglaterra"], ...timesPorLiga["Espanha"]];
+            pool.forEach(t => cSelect.add(new Option(t, t)));
+        }
+        function atualizarTimesLiga() {
+            let liga = document.getElementById('leagueSelect').value;
+            let lSelect = document.getElementById('leagueTeamSelect');
+            lSelect.innerHTML = '';
+            timesPorLiga[liga].forEach(t => lSelect.add(new Option(t, t)));
+        }
+
+        atualizarTimesPartidaRapida(); atualizarTimesTorneio(); atualizarTimesContinental(); atualizarTimesLiga();
+
+        function abrirSelecaoTimes(m) { pararMusicaMenu(); gameMode = m; menuScreen.style.display = 'none'; teamSelectScreen.style.display = 'flex'; }
+        function abrirMenuTorneio() { pararMusicaMenu(); menuScreen.style.display = 'none'; tournamentSelectScreen.style.display = 'flex'; }
+        function abrirMenuContinental() { pararMusicaMenu(); menuScreen.style.display = 'none'; continentalSelectScreen.style.display = 'flex'; }
+        function abrirMenuLiga() { pararMusicaMenu(); menuScreen.style.display = 'none'; leagueSelectScreen.style.display = 'flex'; }
+
+        function voltarMenuPrincipal() {
+            document.querySelectorAll('.game-container > div').forEach(d => d.style.display = 'none');
+            menuScreen.style.display = 'flex';
+            iniciarMusicaMenu();
+        }
+
+        function iniciarJogoComTimes() {
+            playerTeam = document.getElementById('playerTeamSelect').value;
+            cpuTeam = document.getElementById('cpuTeamSelect').value;
+            tocarSomApito(); iniciarTelaJogo();
+        }
+
+        function iniciarTorneio() {
+            torneioLiga = document.getElementById('tournamentSelect').value;
+            playerTeam = document.getElementById('tournamentTeamSelect').value;
+            gameMode = 'tournament'; faseTorneioIndex = 0;
+            let disp = timesPorLiga[torneioLiga].filter(t => t !== playerTeam);
+            disp.sort(() => Math.random() - 0.5);
+            adversariosTorneio = disp.slice(0, 4);
+            cpuTeam = adversariosTorneio[0];
+            tocarSomApito(); mostrarChaveamento();
+        }
+
+        function iniciarContinental() {
+            let tipo = document.getElementById('continentalSelect').value;
+            playerTeam = document.getElementById('continentalTeamSelect').value;
+            gameMode = tipo === 'Libertadores' ? 'libertadores' : 'champions';
+            faseTorneioIndex = 0;
+            let pool = tipo === 'Libertadores' ? [...timesPorLiga["Brasil"], ...timesPorLiga["Argentina"]] : [...timesPorLiga["Inglaterra"], ...timesPorLiga["Espanha"]];
+            let disp = pool.filter(t => t !== playerTeam);
+            disp.sort(() => Math.random() - 0.5);
+            adversariosTorneio = disp.slice(0, 4);
+            cpuTeam = adversariosTorneio[0];
+            tocarSomApito(); mostrarChaveamento();
+        }
+
+        function iniciarLiga() {
+            ligaAtual = document.getElementById('leagueSelect').value;
+            playerTeam = document.getElementById('leagueTeamSelect').value;
+            gameMode = 'league'; rodadaAtualLiga = 1;
+            tabelaLiga = timesPorLiga[ligaAtual].map(n => ({ nome: n, pontos: 0, jogos: 0, sg: 0 }));
+            let disp = timesPorLiga[ligaAtual].filter(t => t !== playerTeam);
+            adversariosLigaRodadas = [];
+            for (let i = 0; i < 20; i++) adversariosLigaRodadas.push(disp[Math.floor(Math.random() * disp.length)]);
+            cpuTeam = adversariosLigaRodadas[0];
+            tocarSomApito(); mostrarTabelaLiga();
+        }
+
+        function mostrarTabelaLiga() {
+            leagueSelectScreen.style.display = 'none';
+            gameScreen.style.display = 'none';
+            tableScreen.style.display = 'flex';
+            document.getElementById('tableTitle').innerText = `TABELA - ${ligaAtual}`;
+            document.getElementById('tableSubtitle').innerText = `Rodada ${rodadaAtualLiga} / 20`;
+            tabelaLiga.sort((a, b) => b.pontos - a.pontos || b.sg - a.sg);
+            let html = '';
+            tabelaLiga.forEach((t, i) => {
+                html += `<tr class="${t.nome===playerTeam?'my-team':''}"><td><b>${i+1}º</b></td><td class="team-col">${t.nome}</td><td><b>${t.pontos}</b></td><td>${t.jogos}</td><td>${t.sg}</td></tr>`;
+            });
+            document.getElementById('tableBody').innerHTML = html;
+        }
+
+        function avancarDaTabelaParaJogo() {
+            if (rodadaAtualLiga > 20) { voltarMenuPrincipal(); return; }
+            tableScreen.style.display = 'none';
+            tocarSomApito(); iniciarTelaJogo();
+        }
+
+        function mostrarChaveamento() {
+            tournamentSelectScreen.style.display = 'none';
+            continentalSelectScreen.style.display = 'none';
+            countrySelectScreen.style.display = 'none';
+            bracketScreen.style.display = 'flex';
+            document.getElementById('bracketTitle').innerText = `CHAVEAMENTO [ Fase ${faseTorneioIndex+1} ]`;
+            document.getElementById('bracketContent').innerHTML = `<div class="bracket-round"><div class="bracket-round-title">Confronto</div><div class="bracket-match active"><span>${playerTeam}</span> vs <span>${cpuTeam}</span></div></div>`;
+        }
+        function avancarDoChaveamentoParaJogo() {
+            bracketScreen.style.display = 'none';
+            tocarSomApito(); iniciarTelaJogo();
+        }
+
+        function iniciarTelaJogo() {
+            document.querySelectorAll('.game-container > div').forEach(d => d.style.display = 'none');
+            gameScreen.style.display = 'flex';
+            playerTeamLabel.innerText = playerTeam.toUpperCase();
+            cpuTeamLabel.innerText = cpuTeam.toUpperCase();
+            setTimeout(reiniciarJogo, 50);
+        }
+
+        function voltarMenu() {
+            gameScreen.style.display = 'none';
+            if (carreira && carreira.idade <= 35 && gameMode.includes('career')) abrirHubCarreira();
+            else { menuScreen.style.display = 'flex'; iniciarMusicaMenu(); }
+            pararTimer(); canInteract = false;
+        }
+
+        function atualizarPlacarVisual() {
+            document.getElementById('player-score-num').innerText = playerScore;
+            document.getElementById('cpu-score-num').innerText = cpuScore;
+            
+            let maxDots = Math.max(5, playerHistory.length, cpuHistory.length);
+            
+            let pDotsHtml = '';
+            for (let i = 0; i < maxDots; i++) {
+                let statusClass = '';
+                if (i < playerHistory.length) {
+                    statusClass = playerHistory[i] ? 'goal' : 'miss';
+                }
+                pDotsHtml += `<span class="dot ${statusClass}"></span>`;
+            }
+            document.getElementById('player-dots').innerHTML = pDotsHtml;
+
+            let cDotsHtml = '';
+            for (let i = 0; i < maxDots; i++) {
+                let statusClass = '';
+                if (i < cpuHistory.length) {
+                    statusClass = cpuHistory[i] ? 'goal' : 'miss';
+                }
+                cDotsHtml += `<span class="dot ${statusClass}"></span>`;
+            }
+            document.getElementById('cpu-dots').innerHTML = cDotsHtml;
+        }
+
+        function iniciarTimer3Segundos(cb) {
+            timerBar.style.display = 'block';
+            timerFill.style.width = '100%';
+            if (timerInterval) clearInterval(timerInterval);
+            let start = Date.now();
+            timerInterval = setInterval(() => {
+                let rem = 3000 - (Date.now() - start);
+                timerFill.style.width = Math.max((rem / 3000) * 100, 0) + '%';
+                if (rem <= 0) { pararTimer(); cb(); }
+            }, 40);
+        }
+
+        function pararTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            timerBar.style.display = 'none';
+        }
+
+        function escolherDirecao(dir) {
+            if (!canInteract) return;
+            canInteract = false; pararTimer();
+            if (turnPhase === 'player_shoot') executarChuteJogador(dir);
+            else executarDefesaJogador(dir);
+        }
+
+        function verificarFimDeJogo() {
+            let pRounds = playerHistory.length;
+            let cRounds = cpuHistory.length;
+
+            if (pRounds <= 5 && cRounds <= 5) {
+                let pRem = 5 - pRounds;
+                let cRem = 5 - cRounds;
+                if (playerScore > cpuScore + cRem || cpuScore > playerScore + pRem) {
+                    fimDeJogo();
+                    return true;
+                }
+                if (pRounds === 5 && cRounds === 5 && playerScore !== cpuScore) {
+                    fimDeJogo();
+                    return true;
+                }
+            } else {
+                if (pRounds === cRounds && playerScore !== cpuScore) {
+                    fimDeJogo();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function proximoTurno() {
+            if (verificarFimDeJogo()) return;
+
+            if (playerHistory.length <= cpuHistory.length) {
+                iniciarTurnoJogadorChuta();
+            } else {
+                iniciarTurnoCPUChuta();
+            }
+        }
+
+        function iniciarTurnoJogadorChuta() {
+            if (gameMode === 'goalkeeper') { iniciarTurnoCPUChuta(); return; }
+            turnPhase = 'player_shoot';
+            tocarSomApito();
+            let roundNum = playerHistory.length + 1;
+            let textoRodada = roundNum > 5 ? `Morte Súbita (${roundNum})` : `Rodada ${roundNum}/5`;
+            roundIndicator.innerText = `${textoRodada} - Sua Vez de Chutar`;
+            turnAlertBanner.innerText = `⚽ SUA VEZ DE CHUTAR!`;
+            message.innerText = `Escolha o canto!`;
+            choicePanel.style.display = 'flex';
+            controls.style.display = 'none';
+            resetarPosicoesVisuais();
+            canInteract = true;
+            iniciarTimer3Segundos(() => executarChuteJogador('centro', true));
+        }
+
+        function executarChuteJogador(dir, tempoEsgotado = false) {
+            let destX = dir === 'esquerda' ? '23%' : (dir === 'direita' ? '65%' : '44%');
+            let defCPU = ['esquerda', 'centro', 'direita'][Math.floor(Math.random() * 3)];
+            tocarSomChute();
+            moverGoleiroVisual(defCPU);
+            
+            ball.classList.add('shooting');
+            ball.style.left = destX;
+            ball.style.bottom = tempoEsgotado ? '18px' : '135px';
+
+            setTimeout(() => {
+                ball.classList.remove('shooting');
+                let gol = false;
+                if (!tempoEsgotado && dir !== defCPU) { playerScore++; gol = true; stats.golosMarcados++; tocarSomGol(); message.innerText = "GOLAÇO! ⚽"; }
+                else { tocarSomDefesa(); message.innerText = "DEFENDEU!"; }
+                playerHistory.push(gol);
+                atualizarPlacarVisual();
+                setTimeout(proximoTurno, 1200);
+            }, 450);
+        }
+
+        function iniciarTurnoCPUChuta() {
+            turnPhase = 'cpu_shoot';
+            tocarSomApito();
+            let roundNum = cpuHistory.length + 1;
+            let textoRodada = roundNum > 5 ? `Morte Súbita (${roundNum})` : `Rodada ${roundNum}/5`;
+            roundIndicator.innerText = `${textoRodada} - Sua Vez de Defender`;
+            turnAlertBanner.innerText = `🧤 SUA VEZ DE DEFENDER!`;
+            message.innerText = `Salte para defender!`;
+            choicePanel.style.display = 'flex';
+            controls.style.display = 'none';
+            resetarPosicoesVisuais();
+            canInteract = true;
+            iniciarTimer3Segundos(() => executarDefesaJogador('nenhuma', true));
+        }
+
+        function executarDefesaJogador(dir, tempoEsgotado = false) {
+            let chute = ['esquerda', 'centro', 'direita'][Math.floor(Math.random() * 3)];
+            tocarSomChute();
+            moverGoleiroVisual(dir);
+            let destX = chute === 'esquerda' ? '23%' : (chute === 'direita' ? '65%' : '44%');
+            
+            ball.classList.add('shooting');
+            ball.style.left = destX;
+            ball.style.bottom = '135px';
+
+            setTimeout(() => {
+                ball.classList.remove('shooting');
+                let cpuGol = true;
+                if (!tempoEsgotado && dir === chute) { 
+                    cpuGol = false; 
+                    stats.penaltisDefendidos++; 
+                    tocarSomDefesa(); 
+                    message.innerText = "DEFESA ESPETACULAR! 🧤"; 
+                } else { 
+                    cpuScore++; 
+                    tocarSomGol(); 
+                    message.innerText = "GOL DA CPU! ⚽"; 
+                }
+                cpuHistory.push(cpuGol);
+                atualizarPlacarVisual();
+                setTimeout(proximoTurno, 1200);
+            }, 450);
+        }
+
+        function moverGoleiroVisual(p) {
+            if (p === 'esquerda') gk.style.left = '24%';
+            else if (p === 'direita') gk.style.left = '62%';
+            else gk.style.left = '43%';
+        }
+
+        function resetarPosicoesVisuais() {
+            ball.style.transition = 'none';
+            ball.classList.remove('shooting');
+            ball.style.left = '44%'; ball.style.bottom = '18px';
+            void ball.offsetWidth;
+            ball.style.transition = 'all 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
+            gk.style.left = '43%';
+        }
+
+        function fimDeJogo() {
+            pararTimer();
+            choicePanel.style.display = 'none';
+            controls.style.display = 'flex';
+            turnAlertBanner.style.display = 'none';
+            stats.partidasJogadas++;
+            if (playerScore > cpuScore) stats.vitorias++; else if (playerScore < cpuScore) stats.derrotas++;
+            salvarStats();
+            message.innerText = `Fim de Jogo! ${playerScore} x ${cpuScore}`;
+            document.getElementById('againBtn').innerText = "Continuar";
+        }
+
+        function continuarOuReiniciar() {
+            celebrationOverlay.style.display = 'none';
+            if (carreira && gameMode.includes('career')) { abrirHubCarreira(); return; }
+            reiniciarJogo();
+        }
+
+        function reiniciarJogo() {
+            playerScore = 0; cpuScore = 0; playerHistory = []; cpuHistory = [];
+            controls.style.display = 'none';
+            choicePanel.style.display = 'flex';
+            turnAlertBanner.style.display = 'block';
+            atualizarPlacarVisual();
+            proximoTurno();
+        }
+
+        window.addEventListener('load', () => setTimeout(iniciarMusicaMenu, 500));
+    </script>
+</body>
+</html>
